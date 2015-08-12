@@ -579,3 +579,31 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * Remove the leading hash signs to disable.
  */
 # $conf['allow_authorize_operations'] = FALSE;
+
+## Varnish
+# http://drupal.org/project/varnish
+# Add Varnish as the page cache handler.
+$conf['cache_backends'][] = 'sites/all/modules/varnish/varnish.cache.inc';
+$conf['cache_class_cache_page'] = 'VarnishCache';
+$conf['reverse_proxy'] = TRUE;
+$conf['reverse_proxy_addresses'] = array('127.0.0.1');
+
+# Bypass Drupal bootstrap for anonymous users so that Drupal sets max-age > 0
+$conf['page_cache_invoke_hooks'] = FALSE;
+
+## memcache
+$conf['cache_backends'][] = 'sites/all/modules/memcache/memcache.inc';
+$conf['cache_default_class'] = 'MemCacheDrupal';
+$conf['memcache_servers'] = array('localhost:11211' => 'default');
+$conf['memcache_bins'] = array('cache' => 'default');
+# "If you want to have multiple Drupal installations share memcached instances,
+# you need to include a unique prefix for each Drupal installation in the $conf
+# array of settings.php:"
+$conf['memcache_key_prefix'] = "main";
+# "Make sure the following line also exists, to ensure that the special
+# cache_form bin is assigned to non-volatile storage:"
+$conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+#$conf['page_cache_without_database'] = TRUE;
+
+## APC
+# ACP drupal cache is not needed because we are using php-fpm to cache our php
